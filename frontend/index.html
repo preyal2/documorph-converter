@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DocuMorph - Word to PDF & PDF to Word Converter</title>
+  <meta name="description" content="Lightning-fast, private, and high-fidelity document conversion between Word DOCX and PDF. Built with modern dual-engine processing.">
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="theme-dark">
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+
+  <!-- Main Navigation Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-logo" id="brandLogo">
+        <div class="logo-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Docu<span class="gradient-text">Morph</span></span>
+          <span class="brand-badge">PRO v1.0</span>
+        </div>
+      </div>
+
+      <nav class="nav-actions">
+        <button id="btnOpenPrompts" class="btn-ghost" title="Explore AI document prompts">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <span>AI Prompts</span>
+        </button>
+        <a href="#features" class="nav-link">Features</a>
+        <button id="themeToggleBtn" class="theme-toggle" aria-label="Toggle Dark/Light Mode">
+          <span class="theme-icon sun-icon">☀️</span>
+          <span class="theme-icon moon-icon">🌙</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="main-wrapper">
+    <section class="hero-section">
+      <div class="badge-pill">
+        <span class="pill-dot"></span> High-Fidelity Bidirectional Conversion Engine
+      </div>
+      <h1 class="hero-title">
+        Convert <span class="gradient-text-accent">Word to PDF</span> <br class="hidden-mobile">
+        & <span class="gradient-text-alt">PDF to Word</span> Seamlessly
+      </h1>
+      <p class="hero-subtitle">
+        Preserve layouts, typography, tables, and images without compromising privacy. Instant conversions powered by intelligent parsing.
+      </p>
+
+      <!-- Conversion Mode Switcher Bar -->
+      <div class="mode-selector-container">
+        <div class="mode-tabs" role="tablist">
+          <button id="modeWordToPdf" class="mode-tab active" role="tab" aria-selected="true" data-mode="word-to-pdf">
+            <span class="mode-icon">📄 ➔ 📕</span>
+            <span class="mode-label">Word to PDF</span>
+          </button>
+          <button id="modePdfToWord" class="mode-tab" role="tab" aria-selected="false" data-mode="pdf-to-word">
+            <span class="mode-icon">📕 ➔ 📄</span>
+            <span class="mode-label">PDF to Word</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Drag & Drop Conversion Area -->
+      <div class="converter-card" id="dropZoneContainer">
+        <div class="drop-zone" id="dropZone">
+          <input type="file" id="fileInput" class="file-input-hidden" accept=".docx,.doc,.pdf">
+          
+          <div class="drop-content" id="dropContent">
+            <div class="upload-icon-pulse">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </div>
+            <h3 class="drop-title">Drag & Drop your document here</h3>
+            <p class="drop-subtitle" id="dropSubtitle">Supports Microsoft Word (.docx, .doc)</p>
+            <div class="drop-cta-group">
+              <button type="button" class="btn-primary" id="btnSelectFile">
+                <span>Browse Files</span>
+              </button>
+            </div>
+            <div class="drop-meta">
+              <span class="meta-tag">🔒 End-to-end encrypted</span>
+              <span class="meta-separator">•</span>
+              <span class="meta-tag">⏱️ Auto-purged after 30 mins</span>
+              <span class="meta-separator">•</span>
+              <span class="meta-tag">⚡ Max 50 MB</span>
+            </div>
+          </div>
+
+          <!-- Active File Card & Processing View -->
+          <div class="process-view hidden" id="processView">
+            <div class="file-meta-box">
+              <div class="file-type-icon" id="fileTypeIcon">📄</div>
+              <div class="file-info-details">
+                <h4 class="selected-file-name" id="selectedFileName">filename.docx</h4>
+                <div class="file-info-sub">
+                  <span id="selectedFileSize">0 KB</span>
+                  <span class="badge-direction" id="badgeDirection">DOCX ➔ PDF</span>
+                </div>
+              </div>
+              <button class="btn-cancel" id="btnCancelFile" title="Remove file">✕</button>
+            </div>
+
+            <!-- Progress Bar Section -->
+            <div class="progress-container" id="progressContainer">
+              <div class="progress-bar-wrapper">
+                <div class="progress-bar-fill" id="progressBarFill" style="width: 0%;"></div>
+              </div>
+              <div class="progress-status-row">
+                <span class="progress-status-text" id="progressStatusText">Ready to convert...</span>
+                <span class="progress-percentage" id="progressPercentage">0%</span>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-btn-row" id="actionBtnRow">
+              <button type="button" class="btn-primary btn-large" id="btnStartConvert">
+                <span>Convert Document Now</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </button>
+            </div>
+
+            <!-- Success State -->
+            <div class="result-box hidden" id="resultBox">
+              <div class="success-badge">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Conversion Complete!</span>
+              </div>
+              
+              <div class="result-details">
+                <div class="result-stat">
+                  <span class="stat-label">Output File</span>
+                  <span class="stat-value" id="resultFileName">document.pdf</span>
+                </div>
+                <div class="result-stat">
+                  <span class="stat-label">Engine</span>
+                  <span class="stat-value engine-badge" id="resultEngine">AI Layout Engine</span>
+                </div>
+                <div class="result-stat">
+                  <span class="stat-label">File Size</span>
+                  <span class="stat-value" id="resultFileSize">1.2 MB</span>
+                </div>
+              </div>
+
+              <div class="result-actions">
+                <a href="#" class="btn-primary btn-download" id="btnDownload" download>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  <span>Download Converted File</span>
+                </a>
+                <button type="button" class="btn-secondary" id="btnResetConverter">
+                  <span>Convert Another File</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Error State -->
+            <div class="error-banner hidden" id="errorBanner">
+              <span class="error-icon">⚠️</span>
+              <span class="error-message" id="errorMessage">An unexpected error occurred.</span>
+              <button class="btn-retry" id="btnRetry">Try Again</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key Features Showcase -->
+    <section class="features-section" id="features">
+      <div class="section-header">
+        <h2 class="section-title">Engineered for Document Perfection</h2>
+        <p class="section-subtitle">Dual-engine technology designed to retain formatting, fonts, and complex tables.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon-wrapper icon-emerald">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          </div>
+          <h3>100% Privacy & Auto-Purge</h3>
+          <p>Files are securely processed in isolated memory environments and automatically deleted after 30 minutes. We never read or store your sensitive data.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrapper icon-blue">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+          </div>
+          <h3>Table & Layout Retention</h3>
+          <p>Advanced PDF-to-Word vector parsing detects gridlines, paragraph hierarchies, bullet styles, and font weights to generate clean, editable DOCX files.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrapper icon-purple">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          </div>
+          <h3>Multi-Tier Fallback Engines</h3>
+          <p>Seamlessly integrates native Microsoft Word automation, headless LibreOffice, and pure Python vector parsers so conversions never fail.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- AI Prompts Modal -->
+  <div class="modal-overlay hidden" id="promptsModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-badge">AI Assistant Toolkit</span>
+          <h3 class="modal-title">Word & PDF AI Conversion Prompts</h3>
+        </div>
+        <button class="modal-close" id="btnCloseModal">✕</button>
+      </div>
+      
+      <div class="modal-body">
+        <p class="modal-desc">Copy these master prompts into ChatGPT, Claude, or Gemini to handle advanced document structuring, OCR repair, and code generation.</p>
+        
+        <div class="prompt-item">
+          <div class="prompt-header-row">
+            <h4>Prompt 1: Structure Messy PDF Text into Clean Word Hierarchy</h4>
+            <button class="btn-copy-prompt" data-target="prompt1">Copy</button>
+          </div>
+          <pre class="prompt-code" id="prompt1">You are an expert document typesetter. I have raw extracted text from a PDF document:
+[PASTE TEXT HERE]
+
+Format this into a clean, professional Microsoft Word document layout:
+1. Identify and format main Document Title and Subtitles.
+2. Structure sections using Heading 1, Heading 2, and bullet points.
+3. Clean up broken line breaks, OCR hyphens, and reconstruct tabular data into Markdown tables.
+4. Provide the result in clean Markdown ready for import into DOCX.</pre>
+        </div>
+
+        <div class="prompt-item">
+          <div class="prompt-header-row">
+            <h4>Prompt 2: Batch Python Document Converter Script</h4>
+            <button class="btn-copy-prompt" data-target="prompt2">Copy</button>
+          </div>
+          <pre class="prompt-code" id="prompt2">Write a production-ready Python CLI utility using `pdf2docx` and `docx2pdf`:
+- Accept an input folder containing either .docx or .pdf files.
+- Automatically detect document type and convert to the opposite format.
+- Output files to a designated ./converted/ folder with a live progress bar (`tqdm`).
+- Include robust error logging and skip corrupted documents gracefully.</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <div class="footer-left">
+        <p class="copyright">© 2026 DocuMorph Converter. Built with FastAPI & Modern Vanilla CSS.</p>
+      </div>
+      <div class="footer-links">
+        <span class="status-indicator"><span class="status-dot"></span> Engine Online</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
