@@ -894,6 +894,23 @@ body.theme-light .app-footer {
   flex-wrap: wrap;
   gap: 16px;
 }
+.developer-name {
+  color: var(--accent-indigo);
+  font-weight: 700;
+}
+.footer-github-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.88rem;
+  transition: color var(--transition-fast);
+  margin-right: 14px;
+}
+.footer-github-link:hover {
+  color: var(--accent-indigo);
+}
 .status-indicator {
   display: inline-flex;
   align-items: center;

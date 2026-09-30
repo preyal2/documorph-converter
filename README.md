@@ -1,27 +1,28 @@
 # 📄 DocuMorph - Word ⇄ PDF Bidirectional Converter
 
-[![GitHub Pages](https://img.shields.io/badge/Demo-GitHub%20Pages-blue?style=for-the-badge&logo=github)](https://preyal2.github.io/documorph-converter/)
-[![CI Status](https://img.shields.io/badge/CI-Passing-brightgreen?style=for-the-badge&logo=githubactions)](https://github.com/preyal2/documorph-converter/actions)
-[![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.14-blue?style=for-the-badge&logo=python)](https://python.org)
+[![Developed by Preyal Modi](https://img.shields.io/badge/Developed%20by-Preyal%20Modi-6366f1?style=for-the-badge&logo=github)](https://github.com/preyal2)
+[![Live Demo: GitHub Pages](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-06b6d4?style=for-the-badge&logo=github)](https://preyal2.github.io/documorph-converter/)
+[![CI Status](https://img.shields.io/badge/CI-Passing-10b981?style=for-the-badge&logo=githubactions)](https://github.com/preyal2/documorph-converter/actions)
+[![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.14-3776ab?style=for-the-badge&logo=python)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
-> **Next-Generation, High-Fidelity Document Conversion Microservice & Web Application.**  
-> Seamlessly convert Microsoft Word (`.docx`) to PDF and Adobe PDF to editable Microsoft Word (`.docx`) with multi-tier fallback engines, layout preservation, and privacy-first local processing.
+> **Engineered & Developed by [Preyal Modi](https://github.com/preyal2).**  
+> **DocuMorph** is an ultra-fast, high-fidelity bidirectional document conversion platform and REST microservice designed to seamlessly transform files between Microsoft Word (`.docx`) and Adobe PDF (`.pdf`). Built with a multi-tier fallback architecture, layout & typography retention, and a privacy-first local processing engine.
 
-🌐 **Live Demo:** [https://preyal2.github.io/documorph-converter/](https://preyal2.github.io/documorph-converter/)
+🌐 **Interactive Live Web Demo:** [https://preyal2.github.io/documorph-converter/](https://preyal2.github.io/documorph-converter/)
 
 ---
 
 ## 🌟 Key Highlights
 
-- 🔄 **Bidirectional Dual Engines**: Convert **Word to PDF** and **PDF to Word** with automatic format sniffing.
-- 🎨 **Modern Glassmorphic UI**: Ultra-clean interface with dark/light themes, subtle ambient lighting, micro-animations, and drag-and-drop.
-- 🛡️ **Multi-Tier Fallback Pipeline**:
+- 🔄 **Bidirectional Dual Conversion Engine**: Convert **Word to PDF** and **PDF to Word** with automatic format sniffing and drag-and-drop.
+- 🎨 **Modern Glassmorphic UI**: Ultra-sleek design with dark/light themes, subtle ambient lighting, micro-animations, and one-click sample document loaders.
+- 🛡️ **Fault-Tolerant Multi-Tier Pipeline**:
   - *DOCX ➔ PDF*: Native MS Word COM Automation ➔ Headless LibreOffice ➔ Pure Python ReportLab Flowables.
   - *PDF ➔ DOCX*: AI vector layout reconstruction (`pdf2docx`) ➔ PyPDF stream extractor.
-- 🔒 **100% Privacy & Auto-Purging**: Files stay on your local machine and are purged automatically after 30 minutes.
-- ⚡ **Full RESTful Microservice**: Built with FastAPI, OpenAPI Swagger UI, and background task cleanup.
+- 🔒 **100% Privacy & Auto-Purging**: Documents remain on your local machine and are purged automatically after 30 minutes. Zero external cloud dependencies.
+- ⚡ **Full RESTful Microservice**: Built with FastAPI, OpenAPI Swagger UI, background garbage collection, and automated CI test suites.
 
 ---
 
@@ -30,10 +31,10 @@
 ```
 documorph-converter/
 ├── run.py                       # One-click app launcher (starts server + opens browser)
-├── requirements.txt             # Pinned Python dependencies
-├── README.md                    # Project overview & quickstart guide
+├── requirements.txt             # Pinned Python dependencies (UTF-8, cross-platform)
+├── README.md                    # Master project guide & quickstart
 │
-├── docs/                        # Dedicated technical documentation
+├── docs/                        # Dedicated Technical Documentation
 │   ├── FRONTEND.md              # UI/UX design tokens, HTML components, CSS & JS
 │   ├── BACKEND.md               # Backend API specifications, engines & storage
 │   ├── ARCHITECTURE.md          # Flowcharts, sequence diagrams & privacy model
@@ -98,20 +99,20 @@ This will automatically:
 
 ---
 
-## 🧪 Running the Tests
+## 🧪 Automated Testing
 
-To run the automated roundtrip unit and integration tests:
+DocuMorph includes a comprehensive test suite covering conversion integrity and REST API endpoints:
 
 ```bash
 python -m unittest tests/test_converters.py
 python -m unittest tests/test_api.py
 ```
 
-Both test suites verify complete bidirectional conversion fidelity and REST endpoint responses.
+Both test suites pass 100% with full roundtrip verification.
 
 ---
 
-## 📚 Dedicated Documentation Index
+## 📚 Dedicated Technical Documentation
 
 Each subsystem is thoroughly documented in its own dedicated document:
 
@@ -119,6 +120,15 @@ Each subsystem is thoroughly documented in its own dedicated document:
 * ⚙️ **[Backend Documentation](docs/BACKEND.md)**: API routes, payload formats, conversion tiers, and storage security.
 * 🏛️ **[System Architecture](docs/ARCHITECTURE.md)**: Sequence diagrams, data pipelines, failure mitigation, and containerization.
 * 💡 **[AI Prompt Library](docs/PROMPTS.md)**: Curated prompts for OCR correction, layout styling, and code generation.
+
+---
+
+## 👨‍💻 Developer & Author
+
+**Preyal Modi**
+* **GitHub Profile:** [@preyal2](https://github.com/preyal2)
+* **Project Repository:** [documorph-converter](https://github.com/preyal2/documorph-converter)
+* **Live Demo:** [https://preyal2.github.io/documorph-converter/](https://preyal2.github.io/documorph-converter/)
 
 ---
 
