@@ -410,7 +410,53 @@ body.theme-light .drop-zone {
 }
 
 .drop-cta-group {
-  margin-bottom: 24px;
+  margin-bottom: 14px;
+}
+
+.sample-files-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+}
+
+.sample-label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.btn-sample {
+  background: rgba(99, 102, 241, 0.12);
+  color: var(--accent-indigo);
+  border: 1px solid rgba(99, 102, 241, 0.28);
+  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all var(--transition-fast);
+}
+
+.btn-sample:hover {
+  background: rgba(99, 102, 241, 0.25);
+  border-color: var(--accent-indigo);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+body.theme-light .btn-sample {
+  background: rgba(99, 102, 241, 0.08);
+  color: var(--accent-indigo);
+}
+body.theme-light .btn-sample:hover {
+  background: var(--accent-indigo);
+  color: #fff;
 }
 
 .btn-primary {

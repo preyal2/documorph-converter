@@ -92,14 +92,56 @@ document.addEventListener('DOMContentLoaded', () => {
   modeWordToPdf.addEventListener('click', () => setMode('word-to-pdf'));
   modePdfToWord.addEventListener('click', () => setMode('pdf-to-word'));
 
-  // 3. File Input Triggers
-  btnSelectFile.addEventListener('click', (e) => {
+  // DOM Elements - Sample Test Buttons
+  const btnSampleDocx = document.getElementById('btnSampleDocx');
+  const btnSamplePdf = document.getElementById('btnSamplePdf');
+
+  // 3. File Input Triggers & Dropzone Handling
+  fileInput.addEventListener('click', (e) => {
+    // Prevent event from bubbling up to dropZone
     e.stopPropagation();
-    fileInput.click();
   });
 
-  dropZone.addEventListener('click', () => {
-    if (!currentFile) fileInput.click();
+  // Enable keyboard navigation on label
+  btnSelectFile.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      fileInput.click();
+    }
+  });
+
+  dropZone.addEventListener('click', (e) => {
+    // Prevent triggering if clicking on buttons, labels, or process view
+    if (e.target.closest('#processView') || 
+        e.target.closest('button') || 
+        e.target.closest('label') || 
+        e.target.closest('.sample-files-group')) {
+      return;
+    }
+    if (!currentFile) {
+      fileInput.click();
+    }
+  });
+
+  // Sample Documents Generation for Instant Testing
+  function createSyntheticFile(filename, mimeType, content) {
+    const blob = new Blob([content], { type: mimeType });
+    return new File([blob], filename, { type: mimeType, lastModified: Date.now() });
+  }
+
+  btnSampleDocx.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setMode('word-to-pdf');
+    // Provide a valid dummy document container
+    const sampleWord = createSyntheticFile('Quarterly_Financial_Report.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'PK\x03\x04DocuMorph Sample Word Document Content Header');
+    handleFileSelection(sampleWord);
+  });
+
+  btnSamplePdf.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setMode('pdf-to-word');
+    const samplePdf = createSyntheticFile('Annual_Invoice_Summary.pdf', 'application/pdf', '%PDF-1.4\n%DocuMorph Sample PDF Stream\n%%EOF');
+    handleFileSelection(samplePdf);
   });
 
   fileInput.addEventListener('change', (e) => {

@@ -82,9 +82,10 @@
 
       <!-- Drag & Drop Conversion Area -->
       <div class="converter-card" id="dropZoneContainer">
+        <!-- Native file input outside dropZone to prevent click recursion -->
+        <input type="file" id="fileInput" class="file-input-hidden" accept=".docx,.doc,.pdf">
+        
         <div class="drop-zone" id="dropZone">
-          <input type="file" id="fileInput" class="file-input-hidden" accept=".docx,.doc,.pdf">
-          
           <div class="drop-content" id="dropContent">
             <div class="upload-icon-pulse">
               <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -96,9 +97,14 @@
             <h3 class="drop-title">Drag & Drop your document here</h3>
             <p class="drop-subtitle" id="dropSubtitle">Supports Microsoft Word (.docx, .doc)</p>
             <div class="drop-cta-group">
-              <button type="button" class="btn-primary" id="btnSelectFile">
+              <label for="fileInput" class="btn-primary" id="btnSelectFile" tabindex="0">
                 <span>Browse Files</span>
-              </button>
+              </label>
+            </div>
+            <div class="sample-files-group">
+              <span class="sample-label">Or test with one click:</span>
+              <button type="button" class="btn-sample" id="btnSampleDocx">📄 Load Sample Word</button>
+              <button type="button" class="btn-sample" id="btnSamplePdf">📕 Load Sample PDF</button>
             </div>
             <div class="drop-meta">
               <span class="meta-tag">🔒 End-to-end encrypted</span>
