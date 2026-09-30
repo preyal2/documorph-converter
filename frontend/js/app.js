@@ -54,17 +54,20 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentFile = null;
   let progressInterval = null;
 
-  // 1. Theme Toggle
-  const savedTheme = localStorage.getItem('documorph_theme') || 'dark';
-  if (savedTheme === 'light') {
+  // 1. Theme Toggle - Modern White Theme as Default
+  const savedTheme = localStorage.getItem('documorph_theme') || 'light';
+  if (savedTheme === 'dark') {
+    document.body.classList.remove('theme-light');
+    document.body.classList.add('theme-dark');
+  } else {
     document.body.classList.remove('theme-dark');
     document.body.classList.add('theme-light');
   }
 
   themeToggleBtn.addEventListener('click', () => {
-    const isLight = document.body.classList.toggle('theme-light');
-    document.body.classList.toggle('theme-dark', !isLight);
-    localStorage.setItem('documorph_theme', isLight ? 'light' : 'dark');
+    const isDark = document.body.classList.toggle('theme-dark');
+    document.body.classList.toggle('theme-light', !isDark);
+    localStorage.setItem('documorph_theme', isDark ? 'dark' : 'light');
   });
 
   // 2. Mode Switcher
