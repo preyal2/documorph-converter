@@ -164,6 +164,32 @@ async def download_file(filename: str):
         headers={"Content-Disposition": f'attachment; filename="{safe_filename}"'}
     )
 
+SAMPLES_DIR = Path(__file__).resolve().parent / "samples"
+
+@app.get("/api/sample/docx")
+async def get_sample_docx():
+    """Download verified sample Word document for testing."""
+    sample_file = SAMPLES_DIR / "sample.docx"
+    if not sample_file.exists():
+        raise HTTPException(status_code=404, detail="Sample file not found.")
+    return FileResponse(
+        path=str(sample_file),
+        filename="DocuMorph_Sample_Document.docx",
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    )
+
+@app.get("/api/sample/pdf")
+async def get_sample_pdf():
+    """Download verified sample PDF document for testing."""
+    sample_file = SAMPLES_DIR / "sample.pdf"
+    if not sample_file.exists():
+        raise HTTPException(status_code=404, detail="Sample file not found.")
+    return FileResponse(
+        path=str(sample_file),
+        filename="DocuMorph_Sample_Document.pdf",
+        media_type="application/pdf"
+    )
+
 # Mount frontend static directory if exists
 if FRONTEND_DIR.exists():
     app.mount("/", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="frontend")

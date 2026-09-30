@@ -4,16 +4,18 @@ Provides multi-tier conversion strategies:
 1. Native MS Word COM automation via docx2pdf (Highest fidelity on Windows).
 2. LibreOffice headless conversion (Cross-platform server standard).
 3. Pure Python fallback via python-docx + ReportLab (Guaranteed zero-dependency fallback).
+4. Raw document fallback (for corrupted docx files or plain text containers).
 """
 
 import os
 import shutil
 import subprocess
+import zipfile
+import re
 from pathlib import Path
 from docx import Document
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib import colors
 
@@ -22,7 +24,6 @@ def convert_docx_to_pdf_reportlab(docx_path: str, pdf_path: str):
     Fallback converter: Parses docx elements and builds a PDF using ReportLab.
     Ensures conversions succeed even without MS Word or LibreOffice.
     """
-    doc = Document(docx_path)
     pdf_doc = SimpleDocTemplate(
         pdf_path,
         pagesize=letter,
@@ -34,13 +35,12 @@ def convert_docx_to_pdf_reportlab(docx_path: str, pdf_path: str):
 
     styles = getSampleStyleSheet()
     
-    # Custom modern typography styles
     title_style = ParagraphStyle(
         'DocTitle',
         parent=styles['Title'],
         fontName='Helvetica-Bold',
-        fontSize=22,
-        leading=26,
+        fontSize=20,
+        leading=24,
         textColor=colors.HexColor('#0f172a'),
         spaceAfter=12
     )
@@ -49,10 +49,10 @@ def convert_docx_to_pdf_reportlab(docx_path: str, pdf_path: str):
         'DocH1',
         parent=styles['Heading1'],
         fontName='Helvetica-Bold',
-        fontSize=16,
-        leading=20,
+        fontSize=15,
+        leading=19,
         textColor=colors.HexColor('#1e293b'),
-        spaceBefore=12,
+        spaceBefore=10,
         spaceAfter=6
     )
     
@@ -68,49 +68,63 @@ def convert_docx_to_pdf_reportlab(docx_path: str, pdf_path: str):
 
     story = []
 
-    for paragraph in doc.paragraphs:
-        text = paragraph.text.strip()
-        if not text:
-            story.append(Spacer(1, 6))
-            continue
+    # Attempt to open as valid Word docx
+    try:
+        doc = Document(docx_path)
+        for paragraph in doc.paragraphs:
+            text = paragraph.text.strip()
+            if not text:
+                story.append(Spacer(1, 6))
+                continue
 
-        p_style = body_style
-        if paragraph.style.name.startswith('Heading 1') or paragraph.style.name == 'Title':
-            p_style = title_style if paragraph.style.name == 'Title' else h1_style
-        elif paragraph.style.name.startswith('Heading'):
-            p_style = h1_style
+            p_style = body_style
+            if paragraph.style.name.startswith('Heading 1') or paragraph.style.name == 'Title':
+                p_style = title_style if paragraph.style.name == 'Title' else h1_style
+            elif paragraph.style.name.startswith('Heading'):
+                p_style = h1_style
 
-        # Escape XML entities for ReportLab
-        clean_text = (text
-            .replace('&', '&amp;')
-            .replace('<', '&lt;')
-            .replace('>', '&gt;'))
+            clean_text = (text
+                .replace('&', '&amp;')
+                .replace('<', '&lt;')
+                .replace('>', '&gt;'))
 
-        story.append(Paragraph(clean_text, p_style))
+            story.append(Paragraph(clean_text, p_style))
 
-    # Process tables if any
-    for table in doc.tables:
-        table_data = []
-        for row in table.rows:
-            row_data = []
-            for cell in row.cells:
-                clean_cell = cell.text.strip().replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-                row_data.append(Paragraph(clean_cell, body_style))
-            table_data.append(row_data)
+        # Process tables if any
+        for table in doc.tables:
+            table_data = []
+            for row in table.rows:
+                row_data = []
+                for cell in row.cells:
+                    clean_cell = cell.text.strip().replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+                    row_data.append(Paragraph(clean_cell, body_style))
+                table_data.append(row_data)
 
-        if table_data:
-            t = Table(table_data)
-            t.setStyle(TableStyle([
-                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#f1f5f9')),
-                ('TEXTCOLOR', (0, 0), (-1, -1), colors.HexColor('#1e293b')),
-                ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-                ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
-                ('TOPPADDING', (0, 0), (-1, -1), 6),
-                ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#cbd5e1')),
-            ]))
-            story.append(Spacer(1, 10))
-            story.append(t)
-            story.append(Spacer(1, 10))
+            if table_data:
+                t = Table(table_data)
+                t.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#f1f5f9')),
+                    ('TEXTCOLOR', (0, 0), (-1, -1), colors.HexColor('#1e293b')),
+                    ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                    ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+                    ('TOPPADDING', (0, 0), (-1, -1), 6),
+                    ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#cbd5e1')),
+                ]))
+                story.append(Spacer(1, 10))
+                story.append(t)
+                story.append(Spacer(1, 10))
+
+    except Exception:
+        # Fallback for damaged or non-standard docx: extract readable text lines
+        try:
+            with open(docx_path, 'r', encoding='utf-8', errors='ignore') as f:
+                raw_text = f.read()
+            clean_lines = [line.strip() for line in raw_text.splitlines() if line.strip()]
+            for line in clean_lines[:300]:
+                safe_line = line.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+                story.append(Paragraph(safe_line, body_style))
+        except Exception:
+            story.append(Paragraph("Document could not be parsed as standard Word document.", body_style))
 
     if not story:
         story.append(Paragraph("[Empty Document]", body_style))
@@ -133,12 +147,24 @@ def convert_word_to_pdf(input_docx: str, output_pdf: str) -> dict:
     engine_used = None
     error_log = []
 
-    # Attempt Tier 1: docx2pdf (MS Word COM)
+    # Attempt Tier 1: docx2pdf (MS Word COM on Windows)
     try:
-        from docx2pdf import convert
-        convert(str(input_path), str(output_path))
-        if output_path.exists() and output_path.stat().st_size > 0:
-            engine_used = "ms-word-com"
+        try:
+            import pythoncom
+            pythoncom.CoInitialize()
+        except Exception:
+            pass
+
+        try:
+            from docx2pdf import convert
+            convert(str(input_path), str(output_path))
+            if output_path.exists() and output_path.stat().st_size > 0:
+                engine_used = "ms-word-com"
+        finally:
+            try:
+                pythoncom.CoUninitialize()
+            except Exception:
+                pass
     except Exception as e:
         error_log.append(f"docx2pdf failed: {str(e)}")
 
